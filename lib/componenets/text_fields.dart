@@ -52,6 +52,7 @@ class ProductFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      textAlign: TextAlign.left,
       controller: txtController,
       decoration: InputDecoration(
         prefixIcon: Text(

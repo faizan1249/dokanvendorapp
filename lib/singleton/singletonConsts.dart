@@ -5,7 +5,9 @@ class Singleton {
 
   Singleton._internal();
 
-
+  int? ApiStatusCode;
+  String? username;
+  String? password;
 }
 
 main() {}

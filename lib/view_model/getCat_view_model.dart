@@ -17,7 +17,9 @@ class GetCatViewModel with ChangeNotifier {
   // late CatModel catModel;
 
   Future<dynamic> getCategory() async {
-    dynamic catListData = await ApiBaseHelper().getMethod();
+    dynamic catListData = await ApiBaseHelper(
+      url: "https://bgentlemen.com/wp-json/wc/v3/products/categories/",
+    ).getMethod();
     print(catListData[0]['id']);
     SetcatListData = catListData;
     print(getcatListData[0]['id']);

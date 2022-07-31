@@ -1,39 +1,69 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:vendor_app/helper/api_helper.dart';
 import 'package:vendor_app/models/add_new_product_model.dart';
+import 'dart:io';
+
+import 'package:vendor_app/singleton/singletonConsts.dart';
 
 class AddProductViewModel with ChangeNotifier {
+  ImagePicker picker = ImagePicker();
+
+  var _image;
+  var imagePicker;
+  var type;
+
   late String status;
   set setStatus(String newStatus) {
     status = newStatus;
     notifyListeners();
   }
 
+  set setImagePath(dynamic newImagePath) {
+    _image = newImagePath;
+    notifyListeners();
+  }
+
+  dynamic get getImagePath => _image;
+
   String get getStatus => status;
 
-  Map<String, dynamic> body = {
-    "name": "arbad chutiya",
-    "type": "simple",
-    "regular_price": "299",
-    "description":
-        "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.",
-    "short_description":
-        "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
-    "categories": [
-      {"id": 34}
-    ],
-    "images": [
-      {
-        "src":
-            "http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg",
-        "position": 0
-      }
-    ]
-  };
+  Future<dynamic> getImage(ImageSource source) async {
+    XFile? image = await picker.pickImage(source: source, imageQuality: 50);
+    _image = File(image!.path);
 
-  Future AddProduct({showLoading = true}) async {
+    setImagePath = _image;
+  }
+
+  Future AddProduct(String productName, String price, String discount,
+      int catID, String productDescription, String productTag, int quantity,
+      {showLoading = true}) async {
     print("Calling Api");
-    dynamic ApiResponse = await ApiBaseHelper().postMethod(body: body);
+    Map<String, dynamic> body = {
+      "name": productName,
+      "type": "simple",
+      "regular_price": price,
+      "sale_price": discount,
+      "description": productDescription,
+      "short_description": "",
+      "manage_stock": true,
+      "stock_quantity": quantity,
+      "categories": [
+        {"id": catID}
+      ],
+      "images": [
+        {"src": getImagePath, "position": 0}
+      ]
+    };
+    dynamic ApiResponse = await ApiBaseHelper(
+      url: "https://bgentlemen.com/wp-json/dokan/v1/products/",
+    ).postMethod(body: body);
+    if (Singleton().ApiStatusCode == 200) {
+      Fluttertoast.showToast(msg: "Product Added successfully");
+    } else {
+      Fluttertoast.showToast(msg: "Something went wrong");
+    }
     // AddNewProductModel _addmodel = new AddNewProductModel.fromJson(ApiResponse);
 
     print(ApiResponse);

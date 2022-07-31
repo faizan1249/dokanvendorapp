@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vendor_app/helper/api_helper.dart';
 import 'package:vendor_app/view_model/add_product_view_model.dart';
 import 'package:vendor_app/view_model/authviewModel.dart';
 import 'package:vendor_app/views/add_product_form_view.dart';
@@ -31,11 +32,14 @@ class myapp extends StatelessWidget {
           create: (context) {
             return AddProductViewModel();
           },
-        )
+        ),
+        ChangeNotifierProvider<ApiBaseHelper>(create: (context) {
+          return ApiBaseHelper(url: "");
+        }),
       ],
       builder: (context, child) {
         return MaterialApp(
-          initialRoute: AddProductForm.id,
+          initialRoute: DokanLogin.id,
           routes: {
             DokanLogin.id: (context) => DokanLogin(),
             AddProductForm.id: (context) => AddProductForm(),
